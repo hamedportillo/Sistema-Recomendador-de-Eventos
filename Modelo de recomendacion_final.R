@@ -36,9 +36,9 @@ dataEventos$key_words<- as.factor(dataEventos$key_words)
 dataEventos$organizer<- as.factor(dataEventos$organizer)
 dataEventos$time_stamp<- as.numeric(dataEventos$time_stamp)
 dataEventos$event_tip <- as.factor(dataEventos$event_tip)
-dataEventos$event_exp <- as.factor(dataEventos$event_exp) # Creada a partir de la descripci髇 del evento
+dataEventos$event_exp <- as.factor(dataEventos$event_exp) # Creada a partir de la descripci贸n del evento
 
-table(dataEventos$category) #328 eventos tienen categoria #se propone categorizar los otros eventos en base a su descripci髇 a futuro
+table(dataEventos$category) #328 eventos tienen categoria #se propone categorizar los otros eventos en base a su descripci贸n a futuro
 str(dataEventos$category_string) # 12 categorias en la data
 
 #Lista de Categorias
@@ -46,7 +46,7 @@ item_list <- dataEventos  %>%
   select(category_string) %>% 
   unique()
 
-#Categorias m醩 populares
+#Categorias m谩s populares
 
 dataEventos %>% 
   group_by(category_string) %>% 
@@ -115,16 +115,16 @@ validation <- temp %>%
 xdata %>% group_by(category_string) %>% 
   summarise(n=n())
 
-#N鷐ero de ratings por evento
+#N煤mero de ratings por evento
 xdata %>% group_by(event_id) %>%
   summarise(n=n()) %>%
   ggplot(aes(n)) +
   geom_histogram(color = "white", bins = 10) +
   scale_x_log10() + 
-  ggtitle("Distribuci髇 de los eventos", 
-          subtitle = "La distribuci髇 es casi sim閠rica") +
-  xlab("n鷐ero de valoraciones recibidas") +
-  ylab("N鷐ero de eventos") +   
+  ggtitle("Distribuci贸n de los eventos", 
+          subtitle = "La distribuci贸n es casi sim茅trica") +
+  xlab("n煤mero de valoraciones recibidas") +
+  ylab("N煤mero de eventos") +   
   theme_economist()
 
 xdata %>% group_by(user_id) %>%
@@ -132,9 +132,9 @@ xdata %>% group_by(user_id) %>%
   ggplot(aes(n)) +
   geom_histogram(color = "white", bins = 10) +
   scale_x_log10() + 
-  ggtitle("Distribuci髇 de usuarios") +
-  xlab("n鷐ero de valoraciones dadas") +
-  ylab("N鷐ero de usuarios") + 
+  ggtitle("Distribuci贸n de usuarios") +
+  xlab("n煤mero de valoraciones dadas") +
+  ylab("N煤mero de usuarios") + 
   scale_y_continuous(labels = comma) + 
   theme_economist()
 
@@ -176,7 +176,7 @@ set.seed(4321, sample.kind = "Rounding")
 p <- function(x, y) mean(y == x)
 rating <- seq(0.5,5,0.5)
 
-# Estimamos la probabilidad para cada rating con la simulaci髇 de Monte Carlo.
+# Estimamos la probabilidad para cada rating con la simulaci贸n de Monte Carlo.
 B <- 10^3
 
 M <- replicate(B, {
@@ -192,7 +192,7 @@ y_hat_random <- sample(rating, size = nrow(test_set),
 result <- tibble()
 
 result <- bind_rows(result, 
-                    tibble(Method = "Predicci髇 aleatoria", 
+                    tibble(Method = "Predicci贸n aleatoria", 
                            RMSE = RMSE(test_set$rating, y_hat_random),
                            MSE  = MSE(test_set$rating, y_hat_random),
                            MAE  = MAE(test_set$rating, y_hat_random)))
@@ -242,7 +242,7 @@ bu <- train_set %>%
   group_by(user_id) %>%
   summarize(b_u = mean(rating - mu - b_i))
 
-# Predicci髇
+# Predicci贸n
 y_hat_bi_bu <- test_set %>% 
   left_join(bi, by='event_id') %>%
   left_join(bu, by='user_id') %>%
@@ -278,7 +278,7 @@ bi %>%
   select(title) %>%
   head(5)
 
-#Regularizaci髇
+#Regularizaci贸n
 
 regularization <- function(lambda, trainset, testset){
   
@@ -297,7 +297,7 @@ regularization <- function(lambda, trainset, testset){
     group_by(user_id) %>%
     summarize(b_u = sum(rating - b_i - mu)/(n()+lambda))
   
-  # Predicci髇: mu + bi + bu  
+  # Predicci贸n: mu + bi + bu  
   predicted_ratings <- testset %>% 
     left_join(b_i, by = "event_id") %>%
     left_join(b_u, by = "user_id") %>%
@@ -319,15 +319,15 @@ rmses <- sapply(lambdas,
 tibble(Lambda = lambdas, RMSE = rmses) %>%
   ggplot(aes(x = Lambda, y = RMSE)) +
   geom_point() +
-  ggtitle("Regularizaci髇", 
-          subtitle = "Escoger la penalizaci髇 que genera el menor RMSE") +
+  ggtitle("Regularizaci贸n", 
+          subtitle = "Escoger la penalizaci贸n que genera el menor RMSE") +
   theme_economist()
 
 # Escogemos el lambda que genera el menor RMSE
 lambda <- lambdas[which.min(rmses)]
 
-# Ahora calculamos el rating predecido usando los mejores par醡etros. 
-# Logrado por la penalizaci髇
+# Ahora calculamos el rating predecido usando los mejores par谩metros. 
+# Logrado por la penalizaci贸n
 mu <- mean(train_set$rating)
 
 
@@ -342,7 +342,7 @@ b_u <- train_set %>%
   group_by(user_id) %>%
   summarize(b_u = sum(rating - b_i - mu)/(n()+lambda))
 
-# Predicci髆
+# Predicci贸m
 y_hat_reg <- test_set %>% 
   left_join(b_i, by = "event_id") %>%
   left_join(b_u, by = "user_id") %>%
@@ -356,10 +356,10 @@ result <- bind_rows(result,
                            MSE  = MSE(test_set$rating, y_hat_reg),
                            MAE  = MAE(test_set$rating, y_hat_reg)))
 
-# resultados con regularizaci髇
+# resultados con regularizaci贸n
 result  
 
-#Matriz de factorizaci髇
+#Matriz de factorizaci贸n
 
 train_data <- train_set %>% 
   select(user_id, event_id, rating) %>% 
@@ -380,7 +380,7 @@ test_data  <-  with(test_set,  data_memory(user_index = user_id,
 # Creando un modelo objeto
 r <-  recosystem::Reco()
 
-# Seleccionando los mejores parametros a trav閟 del tuneo
+# Seleccionando los mejores parametros a trav茅s del tuneo
 opts <- r$tune(train_data, opts = list(dim = c(10, 20, 30), 
                                        lrate = c(0.1, 0.2),
                                        costp_l2 = c(0.01, 0.1), 
@@ -402,7 +402,7 @@ result
 
 
 
-#Modelo lineal con regularizaci髇
+#Modelo lineal con regularizaci贸n
 
 mu_edx <- mean(xdata$rating)
 
@@ -417,7 +417,7 @@ b_u_edx <- xdata %>%
   group_by(user_id) %>%
   summarize(b_u = sum(rating - b_i - mu_edx)/(n()+lambda))
 
-# Predicci髇
+# Predicci贸n
 y_hat_edx <- validation %>% 
   left_join(b_i_edx, by = "event_id") %>%
   left_join(b_u_edx, by = "user_id") %>%
@@ -443,7 +443,7 @@ validation %>%
   select(title) %>%
   head(5)
 
-#Matriz de factorizaci髇
+#Matriz de factorizaci贸n
 
 set.seed(1234, sample.kind = "Rounding")
 
@@ -458,7 +458,7 @@ validation_reco  <-  with(validation, data_memory(user_index = user_id,
 # Creando el modelo objeto
 r <-  recosystem::Reco()
 
-# Tuneando los par醡etros
+# Tuneando los par谩metros
 opts <-  r$tune(edx_reco, opts = list(dim = c(10, 20, 30), 
                                       lrate = c(0.1, 0.2),
                                       costp_l2 = c(0.01, 0.1), 
@@ -468,12 +468,12 @@ opts <-  r$tune(edx_reco, opts = list(dim = c(10, 20, 30),
 # Modelo de entrenamiento
 r$train(edx_reco, opts = c(opts$min, nthread = 4, niter = 20))
 
-# Calculamos la predicci髇
+# Calculamos la predicci贸n
 y_hat_final_reco <-  r$predict(validation_reco, out_memory())
 
 # Actualizamos la tabla de predicciones
 result <- bind_rows(result, 
-                    tibble(Method = "Matriz Final de Factorizaci髇 - recosystem", 
+                    tibble(Method = "Matriz Final de Factorizaci贸n - recosystem", 
                            RMSE = RMSE(validation$rating, y_hat_final_reco),
                            MSE  = MSE(validation$rating, y_hat_final_reco),
                            MAE  = MAE(validation$rating, y_hat_final_reco)))
@@ -487,4 +487,3 @@ arrange(-rating) %>%
 group_by(title) %>% 
 select(title) %>%
 head(10)
-A
